@@ -2,7 +2,7 @@ package Amon2::DBI;
 use strict;
 use warnings;
 use 5.008001;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use parent qw/DBI/;
 
@@ -45,7 +45,10 @@ sub disconnect {
 
 sub _txn_manager {
     my $self = shift;
-    $self->{private_txn_manager} //= DBIx::TransactionManager->new($self);
+    if (!defined $self->{private_txn_manager}) {
+        $self->{private_txn_manager} = DBIx::TransactionManager->new($self);
+    }
+    return $self->{private_txn_manager};
 }
 
 sub txn_scope { $_[0]->_txn_manager->txn_scope(caller => [caller(0)]) }
@@ -138,9 +141,9 @@ Amon2::DBI set sqlite_unicode and mysql_enable_utf8 automatically.
 
 Amon2::DBI supports nested transaction management based on RAII like DBIx::Class or DBIx::Skinny. It uses L<DBIx::TransactionManager> internally.
 
-=item Raising error when you ocurred.
+=item Raising error when you occurred.
 
-Amon2::DBI raises exeception if your $dbh occurred exception.
+Amon2::DBI raises exception if your $dbh occurred exception.
 
 =back
 
