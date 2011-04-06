@@ -2,7 +2,7 @@ package Amon2::DBI;
 use strict;
 use warnings;
 use 5.008001;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use parent qw/DBI/;
 
@@ -34,6 +34,7 @@ use SQL::Interp ();
 sub connected {
     my $dbh = shift;
     $dbh->{private_connect_info} = [@_];
+    $dbh->SUPER::connected(@_);
 }
 
 sub connect_info { $_[0]->{private_connect_info} }
