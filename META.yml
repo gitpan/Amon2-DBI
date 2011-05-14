@@ -9,7 +9,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 1.00'
+generated_by: 'Module::Install version 1.01'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -22,11 +22,11 @@ no_index:
     - xt
 requires:
   Carp::Clan: 0
-  DBI: 0
-  DBIx::TransactionManager: 0
-  SQL::Interp: 0
+  DBI: 1.616
+  DBIx::TransactionManager: 1.09
+  SQL::Interp: 1.10
   parent: 0
   perl: 5.8.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.04
+version: 0.05
