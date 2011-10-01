@@ -2,7 +2,7 @@ package Amon2::DBI;
 use strict;
 use warnings;
 use 5.008001;
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use parent qw/DBI/;
 
@@ -74,6 +74,14 @@ sub prepare {
     return $sth;
 }
 
+sub do {
+    my $self = shift;
+    $self->SUPER::do(@_) or do {
+        my ($sql, $holder, @args) = @_;
+        Amon2::DBI::Util::handle_error($sql, \@args, $self->errstr);
+    };
+}
+
 package Amon2::DBI::st; # statement handler
 our @ISA = qw(DBI::st);
 
@@ -93,6 +101,7 @@ use Data::Dumper ();
 sub handle_error {
     my ( $stmt, $bind, $reason ) = @_;
 
+    local $Data::Dumper::Terse = 1;
     $stmt =~ s/\n/\n          /gm;
     my $err = sprintf <<"TRACE", $reason, $stmt, Data::Dumper::Dumper($bind);
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
