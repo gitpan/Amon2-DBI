@@ -2,7 +2,7 @@ package Amon2::DBI;
 use strict;
 use warnings;
 use 5.008001;
-our $VERSION = '0.31';
+our $VERSION = '0.32';
 
 use parent qw/DBI/;
 
@@ -39,6 +39,7 @@ our @ISA = qw(DBI::db);
 use DBIx::TransactionManager;
 use SQL::Interp ();
 use Carp ();
+use Scalar::Util ();
 
 sub connected {
     my $dbh = shift;
@@ -50,7 +51,11 @@ sub connect_info { $_[0]->{private_connect_info} }
 
 sub _txn_manager {
     my $self = shift;
-    return DBIx::TransactionManager->new($self);
+    if (not defined $self->{private_txn_manager}) {
+        $self->{private_txn_manager} = DBIx::TransactionManager->new($self);
+        Scalar::Util::weaken($self->{private_txn_manager}->{dbh});
+    }
+    return $self->{private_txn_manager};
 }
 
 sub txn_scope { $_[0]->_txn_manager->txn_scope(caller => [caller(0)]) }
